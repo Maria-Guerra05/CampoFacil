@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">
+<h1>{{ titulo }}</h1><a class="btn primary" href="/{% if tipo == 'receita' %}receitas{% else %}despesas{% endif %}/nova/">+ Novo</a>
+</div>
+<div class="table-card">
+<table>
+<thead><tr><th>Descrição</th><th>Data</th><th>Categoria</th><th>Valor</th><th>Ação</th></tr></thead>
+<tbody>
+{% for x in itens %}
+<tr>
+<td>{{ x.descricao }}</td><td>{{ x.data|date:"d/m/Y" }}</td><td>{{ x.categoria|default:"-" }}</td>
+<td>R$ {{ x.valor|floatformat:2 }}</td>
+<td>
+<form method="post" action="/{% if tipo == 'receita' %}receitas{% else %}despesas{% endif %}/{{ 'excluir' }}/{{ x.id }}/">{% csrf_token %}
+<button class="link-danger" onclick="return confirm('Excluir este registro?')">Excluir</button></form>
+</td>
+</tr>
+{% empty %}<tr><td colspan="5">Nenhum registro encontrado.</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}
