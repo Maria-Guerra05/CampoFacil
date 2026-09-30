@@ -1,0 +1,118 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampoFácil - Produtor</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>CampoFácil</h1>
+
+    <h2>Informações do Produtor</h2>
+
+    <hr>
+
+    <h3>{{ produtor.nome }}</h3>
+
+    {% if produtor.propriedade %}
+        <p>
+            <strong>Propriedade:</strong>
+            {{ produtor.propriedade }}
+        </p>
+    {% endif %}
+
+    {% if produtor.cidade %}
+        <p>
+            <strong>Cidade:</strong>
+            {{ produtor.cidade }}
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Resumo financeiro</h3>
+
+    <p>
+        <strong>Total de receitas:</strong>
+        R$ {{ total_receitas }}
+    </p>
+
+    <p>
+        <strong>Total de despesas:</strong>
+        R$ {{ total_despesas }}
+    </p>
+
+    <p>
+        <strong>Saldo:</strong>
+        R$ {{ saldo }}
+    </p>
+
+    <hr>
+
+    <h3>Receitas</h3>
+
+    {% if receitas %}
+        {% for receita in receitas %}
+            <p>
+                {{ receita.data|date:"d/m/Y" }}
+                — {{ receita.descricao }}
+                — R$ {{ receita.valor }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Nenhuma receita cadastrada.</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Despesas</h3>
+
+    {% if despesas %}
+        {% for despesa in despesas %}
+            <p>
+                {{ despesa.data|date:"d/m/Y" }}
+                — {{ despesa.descricao }}
+                — R$ {{ despesa.valor }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Nenhuma despesa cadastrada.</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Documentos</h3>
+
+    {% if documentos %}
+        {% for documento in documentos %}
+            <p>
+                {{ documento.data|date:"d/m/Y" }}
+                — {{ documento.nome }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Nenhum documento cadastrado.</p>
+    {% endif %}
+
+    <br>
+    <a href="{% url 'relatorio_produtor' produtor.pk %}">
+    📊 Gerar relatório
+</a>
+    <a href="{% url 'dashboard' %}">
+        Voltar
+    </a>
+
+</div>
+
+</body>
+</html>

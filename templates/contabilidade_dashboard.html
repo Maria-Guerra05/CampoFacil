@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampoFácil - Contabilidade</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>CampoFácil</h1>
+
+    <h2>Área da Contabilidade</h2>
+
+    <p>
+        Bem-vindo, {{ contabilidade.nome }}.
+    </p>
+
+    <hr>
+
+    <h3>Produtores vinculados</h3>
+
+    {% if produtores %}
+
+        {% for produtor in produtores %}
+
+            <div class="card">
+
+                <h3>{{ produtor.nome }}</h3>
+
+                {% if produtor.propriedade %}
+                    <p>
+                        <strong>Propriedade:</strong>
+                        {{ produtor.propriedade }}
+                    </p>
+                {% endif %}
+
+                {% if produtor.cidade %}
+                    <p>
+                        <strong>Cidade:</strong>
+                        {{ produtor.cidade }}
+                    </p>
+                {% endif %}
+
+                <a href="{% url 'contabilidade_produtor' produtor.pk %}">
+    Acessar informações
+</a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Nenhum produtor está vinculado a esta contabilidade.
+        </p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="/logout/">Sair</a>
+
+</div>
+
+</body>
+</html>

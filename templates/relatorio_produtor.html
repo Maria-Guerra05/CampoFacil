@@ -1,0 +1,214 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Relatório - CampoFácil</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .relatorio {
+            background: white;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .resumo-card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        .botoes {
+            margin-top: 25px;
+        }
+
+        @media print {
+            .botoes {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="relatorio">
+
+        <h1>CampoFácil</h1>
+
+        <h2>Relatório do Produtor</h2>
+
+        <hr>
+
+        <h3>{{ produtor.nome }}</h3>
+
+        {% if produtor.propriedade %}
+            <p>
+                <strong>Propriedade:</strong>
+                {{ produtor.propriedade }}
+            </p>
+        {% endif %}
+
+        {% if produtor.cidade %}
+            <p>
+                <strong>Cidade:</strong>
+                {{ produtor.cidade }}
+            </p>
+        {% endif %}
+
+        <div class="resumo">
+
+            <div class="resumo-card">
+                <strong>Total de Receitas</strong>
+                <h3>R$ {{ total_receitas }}</h3>
+            </div>
+
+            <div class="resumo-card">
+                <strong>Total de Despesas</strong>
+                <h3>R$ {{ total_despesas }}</h3>
+            </div>
+
+            <div class="resumo-card">
+                <strong>Saldo</strong>
+                <h3>R$ {{ saldo }}</h3>
+            </div>
+
+        </div>
+
+        <h3>Receitas</h3>
+
+        {% if receitas %}
+
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+            </tr>
+
+            {% for receita in receitas %}
+            <tr>
+                <td>{{ receita.data|date:"d/m/Y" }}</td>
+                <td>{{ receita.descricao }}</td>
+                <td>{{ receita.categoria }}</td>
+                <td>R$ {{ receita.valor }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>Nenhuma receita cadastrada.</p>
+
+        {% endif %}
+
+
+        <h3>Despesas</h3>
+
+        {% if despesas %}
+
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+            </tr>
+
+            {% for despesa in despesas %}
+            <tr>
+                <td>{{ despesa.data|date:"d/m/Y" }}</td>
+                <td>{{ despesa.descricao }}</td>
+                <td>{{ despesa.categoria }}</td>
+                <td>R$ {{ despesa.valor }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>Nenhuma despesa cadastrada.</p>
+
+        {% endif %}
+
+
+        <h3>Documentos</h3>
+
+        {% if documentos %}
+
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Documento</th>
+                <th>Categoria</th>
+            </tr>
+
+            {% for documento in documentos %}
+            <tr>
+                <td>{{ documento.data|date:"d/m/Y" }}</td>
+                <td>{{ documento.nome }}</td>
+                <td>{{ documento.categoria }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>Nenhum documento cadastrado.</p>
+
+        {% endif %}
+
+
+        <div class="botoes">
+
+            <button onclick="window.print()">
+                🖨️ Imprimir / Salvar PDF
+            </button>
+
+            <a href="{% url 'contabilidade_produtor' produtor.pk %}">
+                Voltar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from .forms import ProdutorForm, ReceitaForm, DespesaForm, DocumentoForm
-from .models import Produtor, Receita, Despesa, Documento
+from .models import Produtor, Contabilidade, Receita, Despesa, Documento
 
 def get_produtor(user):
     produtor, _ = Produtor.objects.get_or_create(
@@ -14,22 +14,122 @@ def get_produtor(user):
 
 @login_required
 def dashboard(request):
+
+    # Se o usuário for da contabilidade,
+    # mostra o painel específico da contabilidade.
+    if hasattr(request.user, "contabilidade"):
+        contabilidade = request.user.contabilidade
+
+        return render(request, "contabilidade_dashboard.html", {
+            "contabilidade": contabilidade,
+            "produtores": contabilidade.produtores.all(),
+        })
+
+    # Caso contrário, continua funcionando como produtor.
     produtor = get_produtor(request.user)
+
     receitas = Receita.objects.filter(produtor=produtor)
     despesas = Despesa.objects.filter(produtor=produtor)
-    total_receitas = sum((x.valor for x in receitas), Decimal("0"))
-    total_despesas = sum((x.valor for x in despesas), Decimal("0"))
+
+    total_receitas = sum(
+        (x.valor for x in receitas),
+        Decimal("0")
+    )
+
+    total_despesas = sum(
+        (x.valor for x in despesas),
+        Decimal("0")
+    )
+
     saldo = total_receitas - total_despesas
+
     return render(request, "dashboard.html", {
         "produtor": produtor,
         "total_receitas": total_receitas,
         "total_despesas": total_despesas,
         "saldo": saldo,
-        "qtd_documentos": Documento.objects.filter(produtor=produtor).count(),
+        "qtd_documentos": Documento.objects.filter(
+            produtor=produtor
+        ).count(),
         "ultimas_receitas": receitas[:5],
         "ultimas_despesas": despesas[:5],
     })
+@login_required
+def contabilidade_produtor(request, pk):
+    contabilidade = get_object_or_404(
+        Contabilidade,
+        usuario=request.user
+    )
 
+    produtor = get_object_or_404(
+        contabilidade.produtores,
+        pk=pk
+    )
+
+    receitas = Receita.objects.filter(produtor=produtor)
+    despesas = Despesa.objects.filter(produtor=produtor)
+    documentos = Documento.objects.filter(produtor=produtor)
+
+    total_receitas = sum(
+        (x.valor for x in receitas),
+        Decimal("0")
+    )
+
+    total_despesas = sum(
+        (x.valor for x in despesas),
+        Decimal("0")
+    )
+
+    saldo = total_receitas - total_despesas
+
+    return render(request, "contabilidade_produtor.html", {
+        "contabilidade": contabilidade,
+        "produtor": produtor,
+        "receitas": receitas,
+        "despesas": despesas,
+        "documentos": documentos,
+        "total_receitas": total_receitas,
+        "total_despesas": total_despesas,
+        "saldo": saldo,
+    })
+@login_required
+def relatorio_produtor(request, pk):
+    contabilidade = get_object_or_404(
+        Contabilidade,
+        usuario=request.user
+    )
+
+    produtor = get_object_or_404(
+        Produtor,
+        pk=pk,
+        contabilidades=contabilidade
+    )
+
+    receitas = Receita.objects.filter(produtor=produtor)
+    despesas = Despesa.objects.filter(produtor=produtor)
+    documentos = Documento.objects.filter(produtor=produtor)
+
+    total_receitas = sum(
+        (x.valor for x in receitas),
+        Decimal("0")
+    )
+
+    total_despesas = sum(
+        (x.valor for x in despesas),
+        Decimal("0")
+    )
+
+    saldo = total_receitas - total_despesas
+
+    return render(request, "relatorio_produtor.html", {
+        "produtor": produtor,
+        "receitas": receitas,
+        "despesas": despesas,
+        "documentos": documentos,
+        "total_receitas": total_receitas,
+        "total_despesas": total_despesas,
+        "saldo": saldo,
+    })
 @login_required
 def cadastro_produtor(request):
     produtor = get_produtor(request.user)
