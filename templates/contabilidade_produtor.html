@@ -1,118 +1,224 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="pt-br">
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="page-title">
+    <div>
+        <span class="eyebrow">Produtor rural</span>
+        <h1>{{ produtor.nome }}</h1>
 
-    <title>CampoFácil - Produtor</title>
+        {% if produtor.propriedade or produtor.cidade %}
+            <p style="color:#667267; margin:0;">
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+                {% if produtor.propriedade %}
+                    {{ produtor.propriedade }}
+                {% endif %}
 
-<body>
+                {% if produtor.propriedade and produtor.cidade %}
+                    ·
+                {% endif %}
 
-<div class="container">
+                {% if produtor.cidade %}
+                    {{ produtor.cidade }}
+                {% endif %}
 
-    <h1>CampoFácil</h1>
+            </p>
+        {% endif %}
+    </div>
+</div>
 
-    <h2>Informações do Produtor</h2>
 
-    <hr>
+<div class="cards">
 
-    <h3>{{ produtor.nome }}</h3>
+    <div class="card">
+        <span>Total de receitas</span>
+        <strong>R$ {{ total_receitas }}</strong>
+    </div>
 
-    {% if produtor.propriedade %}
-        <p>
-            <strong>Propriedade:</strong>
-            {{ produtor.propriedade }}
-        </p>
-    {% endif %}
+    <div class="card">
+        <span>Total de despesas</span>
+        <strong>R$ {{ total_despesas }}</strong>
+    </div>
 
-    {% if produtor.cidade %}
-        <p>
-            <strong>Cidade:</strong>
-            {{ produtor.cidade }}
-        </p>
-    {% endif %}
+    <div class="card">
+        <span>Saldo</span>
+        <strong>R$ {{ saldo }}</strong>
+    </div>
 
-    <hr>
+</div>
 
-    <h3>Resumo financeiro</h3>
 
-    <p>
-        <strong>Total de receitas:</strong>
-        R$ {{ total_receitas }}
-    </p>
+<div class="panel" style="margin-top:22px;">
 
-    <p>
-        <strong>Total de despesas:</strong>
-        R$ {{ total_despesas }}
-    </p>
+    <div class="page-title" style="margin-bottom:10px;">
+        <div>
+            <h2>Receitas</h2>
 
-    <p>
-        <strong>Saldo:</strong>
-        R$ {{ saldo }}
-    </p>
-
-    <hr>
-
-    <h3>Receitas</h3>
+            <p style="color:#667267;">
+                Receitas registradas pelo produtor.
+            </p>
+        </div>
+    </div>
 
     {% if receitas %}
+
         {% for receita in receitas %}
-            <p>
-                {{ receita.data|date:"d/m/Y" }}
-                — {{ receita.descricao }}
-                — R$ {{ receita.valor }}
-            </p>
+
+            <div class="row">
+
+                <div>
+                    <strong>{{ receita.descricao }}</strong>
+
+                    <small>
+                        {{ receita.data|date:"d/m/Y" }}
+
+                        {% if receita.categoria %}
+                            · {{ receita.categoria }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <strong>
+                    R$ {{ receita.valor }}
+                </strong>
+
+            </div>
+
         {% endfor %}
+
     {% else %}
-        <p>Nenhuma receita cadastrada.</p>
+
+        <p style="color:#667267;">
+            Nenhuma receita cadastrada.
+        </p>
+
     {% endif %}
 
-    <hr>
+</div>
 
-    <h3>Despesas</h3>
+
+<div class="panel" style="margin-top:18px;">
+
+    <div class="page-title" style="margin-bottom:10px;">
+        <div>
+            <h2>Despesas</h2>
+
+            <p style="color:#667267;">
+                Despesas registradas pelo produtor.
+            </p>
+        </div>
+    </div>
 
     {% if despesas %}
+
         {% for despesa in despesas %}
-            <p>
-                {{ despesa.data|date:"d/m/Y" }}
-                — {{ despesa.descricao }}
-                — R$ {{ despesa.valor }}
-            </p>
+
+            <div class="row">
+
+                <div>
+                    <strong>{{ despesa.descricao }}</strong>
+
+                    <small>
+                        {{ despesa.data|date:"d/m/Y" }}
+
+                        {% if despesa.categoria %}
+                            · {{ despesa.categoria }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <strong>
+                    R$ {{ despesa.valor }}
+                </strong>
+
+            </div>
+
         {% endfor %}
+
     {% else %}
-        <p>Nenhuma despesa cadastrada.</p>
+
+        <p style="color:#667267;">
+            Nenhuma despesa cadastrada.
+        </p>
+
     {% endif %}
 
-    <hr>
+</div>
 
-    <h3>Documentos</h3>
+
+<div class="panel" style="margin-top:18px;">
+
+    <div class="page-title" style="margin-bottom:10px;">
+        <div>
+            <h2>Documentos</h2>
+
+            <p style="color:#667267;">
+                Notas, comprovantes e documentos enviados pelo produtor.
+            </p>
+        </div>
+    </div>
 
     {% if documentos %}
+
         {% for documento in documentos %}
-            <p>
-                {{ documento.data|date:"d/m/Y" }}
-                — {{ documento.nome }}
-            </p>
+
+            <div class="row">
+
+                <div>
+                    <strong>{{ documento.nome }}</strong>
+
+                    <small>
+                        {{ documento.data|date:"d/m/Y" }}
+
+                        {% if documento.categoria %}
+                            · {{ documento.categoria }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                {% if documento.arquivo %}
+
+                    <a
+                        class="btn"
+                        href="{{ documento.arquivo.url }}"
+                        target="_blank"
+                    >
+                        Ver documento
+                    </a>
+
+                {% endif %}
+
+            </div>
+
         {% endfor %}
+
     {% else %}
-        <p>Nenhum documento cadastrado.</p>
+
+        <p style="color:#667267;">
+            Nenhum documento cadastrado.
+        </p>
+
     {% endif %}
 
-    <br>
-    <a href="{% url 'relatorio_produtor' produtor.pk %}">
-    📊 Gerar relatório
-</a>
-    <a href="{% url 'dashboard' %}">
-        Voltar
+</div>
+
+
+<div class="quick">
+
+    <a
+        class="btn primary"
+        href="{% url 'relatorio_produtor' produtor.pk %}"
+    >
+        📊 Gerar relatório
+    </a>
+
+    <a
+        class="btn"
+        href="{% url 'dashboard' %}"
+    >
+        ← Voltar para produtores
     </a>
 
 </div>
 
-</body>
-</html>
+{% endblock %}

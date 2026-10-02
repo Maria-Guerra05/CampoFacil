@@ -1,19 +1,94 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="page-title"><h1>Documentos</h1><a class="btn primary" href="/documentos/novo/">+ Enviar documento</a></div>
-<div class="table-card">
-<table>
-<thead><tr><th>Documento</th><th>Data</th><th>Categoria</th><th>Valor</th><th>Arquivo</th><th>Ação</th></tr></thead>
-<tbody>
-{% for x in documentos %}
-<tr>
-<td>{{ x.nome }}</td><td>{{ x.data|date:"d/m/Y" }}</td><td>{{ x.categoria|default:"-" }}</td>
-<td>{% if x.valor %}R$ {{ x.valor|floatformat:2 }}{% else %}-{% endif %}</td>
-<td><a href="{{ x.arquivo.url }}" target="_blank">Abrir</a></td>
-<td><form method="post" action="/documentos/excluir/{{ x.id }}/">{% csrf_token %}<button class="link-danger" onclick="return confirm('Excluir este documento?')">Excluir</button></form></td>
-</tr>
-{% empty %}<tr><td colspan="6">Nenhum documento enviado.</td></tr>{% endfor %}
-</tbody>
-</table>
+
+<div class="page-title">
+    <h1>Documentos</h1>
+
+    <a class="btn primary" href="/documentos/novo/">
+        + Enviar documento
+    </a>
 </div>
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Data</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+                <th>Arquivo</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for x in documentos %}
+
+        <tr>
+
+            <td>{{ x.nome }}</td>
+
+            <td>{{ x.data|date:"d/m/Y" }}</td>
+
+            <td>{{ x.categoria|default:"-" }}</td>
+
+            <td>
+                {% if x.valor %}
+                    R$ {{ x.valor|floatformat:2 }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="{{ x.arquivo.url }}" target="_blank">
+                    Abrir
+                </a>
+            </td>
+
+            <td>
+                <form method="post"
+                      action="/documentos/excluir/{{ x.id }}/">
+
+                    {% csrf_token %}
+
+                    <button class="link-danger"
+                            onclick="return confirm('Excluir este documento?')">
+                        Excluir
+                    </button>
+
+                </form>
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="6">
+                Nenhum documento enviado.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="quick">
+
+    <a class="btn" href="{% url 'dashboard' %}">
+        ← Voltar para início
+    </a>
+
+</div>
+
 {% endblock %}

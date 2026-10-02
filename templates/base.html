@@ -9,16 +9,26 @@
 <body>
 <header class="topo">
     <a class="logo" href="/">🌱 CampoFácil</a>
-    {% if user.is_authenticated %}
-    <nav>
-        <a href="/">Início</a>
+ {% if user.is_authenticated %}
+<nav>
+
+    <a href="/">Início</a>
+
+    {% if user.contabilidade %}
+        <a href="/">Produtores</a>
+    {% elif user.produtor %}
         <a href="/receitas/">Receitas</a>
         <a href="/despesas/">Despesas</a>
         <a href="/documentos/">Documentos</a>
         <a href="/cadastro/">Meu cadastro</a>
-        <form method="post" action="/logout/" class="logout">{% csrf_token %}<button>Sair</button></form>
-    </nav>
     {% endif %}
+
+    <form method="post" action="/logout/" class="logout">
+        {% csrf_token %}
+        <button>Sair</button>
+    </form>
+</nav>
+{% endif %}
 </header>
 <main class="container">
 {% if messages %}

@@ -56,6 +56,12 @@
                 display: none;
             }
         }
+
+        @media (max-width: 700px) {
+            .resumo {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -82,10 +88,11 @@
 
         {% if produtor.cidade %}
             <p>
-                <strong>Cidade:</strong>
+                <strong>Município:</strong>
                 {{ produtor.cidade }}
             </p>
         {% endif %}
+
 
         <div class="resumo">
 
@@ -106,11 +113,13 @@
 
         </div>
 
+
         <h3>Receitas</h3>
 
         {% if receitas %}
 
         <table>
+
             <tr>
                 <th>Data</th>
                 <th>Descrição</th>
@@ -119,12 +128,17 @@
             </tr>
 
             {% for receita in receitas %}
+
             <tr>
                 <td>{{ receita.data|date:"d/m/Y" }}</td>
+
                 <td>{{ receita.descricao }}</td>
+
                 <td>{{ receita.categoria }}</td>
+
                 <td>R$ {{ receita.valor }}</td>
             </tr>
+
             {% endfor %}
 
         </table>
@@ -141,6 +155,7 @@
         {% if despesas %}
 
         <table>
+
             <tr>
                 <th>Data</th>
                 <th>Descrição</th>
@@ -149,12 +164,17 @@
             </tr>
 
             {% for despesa in despesas %}
+
             <tr>
                 <td>{{ despesa.data|date:"d/m/Y" }}</td>
+
                 <td>{{ despesa.descricao }}</td>
+
                 <td>{{ despesa.categoria }}</td>
+
                 <td>R$ {{ despesa.valor }}</td>
             </tr>
+
             {% endfor %}
 
         </table>
@@ -171,6 +191,7 @@
         {% if documentos %}
 
         <table>
+
             <tr>
                 <th>Data</th>
                 <th>Documento</th>
@@ -178,11 +199,15 @@
             </tr>
 
             {% for documento in documentos %}
+
             <tr>
                 <td>{{ documento.data|date:"d/m/Y" }}</td>
+
                 <td>{{ documento.nome }}</td>
+
                 <td>{{ documento.categoria }}</td>
             </tr>
+
             {% endfor %}
 
         </table>

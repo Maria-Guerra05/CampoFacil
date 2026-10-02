@@ -17,7 +17,8 @@
 {% if field.errors %}<div class="erro">{{ field.errors }}</div>{% endif %}
 </div>
 {% endfor %}
-<div class="actions"><a class="btn" href="{{ voltar }}">Cancelar</a><button class="btn primary">Salvar</button></div>
-</form>
+<div class="actions">
+    <a class="btn" href="{{ voltar }}">← Voltar</a>
+    <button class="btn primary">Salvar</button>
 </div>
 {% endblock %}

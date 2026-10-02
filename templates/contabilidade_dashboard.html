@@ -1,75 +1,82 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block content %}
 
-    <title>CampoFácil - Contabilidade</title>
+<div class="welcome">
+    <div>
+        <span class="eyebrow">Área da Contabilidade</span>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+        <h1>Olá, {{ contabilidade.nome }}!</h1>
 
-<body>
+        <p>
+            Consulte as informações dos produtores vinculados ao escritório.
+        </p>
+    </div>
+</div>
 
-<div class="container">
+<div class="page-title">
+    <div>
+        <h2>Produtores vinculados</h2>
 
-    <h1>CampoFácil</h1>
+        <p style="color:#667267;">
+            Produtores cadastrados neste escritório de contabilidade.
+        </p>
+    </div>
+</div>
 
-    <h2>Área da Contabilidade</h2>
+{% if produtores %}
 
-    <p>
-        Bem-vindo, {{ contabilidade.nome }}.
-    </p>
-
-    <hr>
-
-    <h3>Produtores vinculados</h3>
-
-    {% if produtores %}
+    <div class="grid2">
 
         {% for produtor in produtores %}
 
             <div class="card">
 
-                <h3>{{ produtor.nome }}</h3>
+                <span>PRODUTOR RURAL</span>
+
+                <h2>{{ produtor.nome }}</h2>
 
                 {% if produtor.propriedade %}
                     <p>
-                        <strong>Propriedade:</strong>
+                        <strong>Propriedade:</strong><br>
                         {{ produtor.propriedade }}
                     </p>
                 {% endif %}
 
                 {% if produtor.cidade %}
                     <p>
-                        <strong>Cidade:</strong>
+                        <strong>Município:</strong><br>
                         {{ produtor.cidade }}
                     </p>
                 {% endif %}
 
-                <a href="{% url 'contabilidade_produtor' produtor.pk %}">
-    Acessar informações
-</a>
+                <div class="quick">
+                    <a
+                        class="btn primary"
+                        href="{% url 'contabilidade_produtor' produtor.pk %}"
+                    >
+                        Acessar informações
+                    </a>
+                </div>
 
             </div>
 
         {% endfor %}
 
-    {% else %}
+    </div>
 
-        <p>
-            Nenhum produtor está vinculado a esta contabilidade.
+{% else %}
+
+    <div class="panel">
+
+        <h2>Nenhum produtor vinculado</h2>
+
+        <p style="color:#667267;">
+            Ainda não existem produtores vinculados a esta contabilidade.
         </p>
 
-    {% endif %}
+    </div>
 
-    <br>
+{% endif %}
 
-    <a href="/logout/">Sair</a>
-
-</div>
-
-</body>
-</html>
+{% endblock %}
