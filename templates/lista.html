@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load moeda %}
 {% block content %}
 
 <div class="page-title">
@@ -36,7 +36,7 @@
 
             <td>{{ x.categoria|default:"-" }}</td>
 
-            <td>R$ {{ x.valor|floatformat:2 }}</td>
+            <td>{{ x.valor|moeda_br }}</</td>
 
             <td>
                 <form method="post"

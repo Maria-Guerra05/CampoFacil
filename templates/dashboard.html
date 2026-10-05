@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load moeda %}
+
 {% block content %}
 <div class="welcome">
     <div>
@@ -9,10 +11,25 @@
 </div>
 
 <div class="cards">
-    <div class="card"><span>Receitas</span><strong>R$ {{ total_receitas|floatformat:2 }}</strong></div>
-    <div class="card"><span>Despesas</span><strong>R$ {{ total_despesas|floatformat:2 }}</strong></div>
-    <div class="card"><span>Saldo</span><strong>R$ {{ saldo|floatformat:2 }}</strong></div>
-    <div class="card"><span>Documentos</span><strong>{{ qtd_documentos }}</strong></div>
+    <div class="card">
+        <span>Receitas</span>
+        <strong>{{ total_receitas|moeda_br }}</strong>
+    </div>
+
+    <div class="card">
+        <span>Despesas</span>
+        <strong>{{ total_despesas|moeda_br }}</strong>
+    </div>
+
+    <div class="card">
+        <span>Saldo</span>
+        <strong>{{ saldo|moeda_br }}</strong>
+    </div>
+
+    <div class="card">
+        <span>Documentos</span>
+        <strong>{{ qtd_documentos }}</strong>
+    </div>
 </div>
 
 <div class="quick">
@@ -22,19 +39,40 @@
 </div>
 
 <div class="grid2">
-<section class="panel">
-<h2>Últimas receitas</h2>
-{% for x in ultimas_receitas %}
-<div class="row"><span>{{ x.descricao }}<small>{{ x.data|date:"d/m/Y" }}</small></span><b>R$ {{ x.valor|floatformat:2 }}</b></div>
-{% empty %}<p>Nenhuma receita cadastrada.</p>{% endfor %}
-<a href="/receitas/">Ver todas</a>
-</section>
-<section class="panel">
-<h2>Últimas despesas</h2>
-{% for x in ultimas_despesas %}
-<div class="row"><span>{{ x.descricao }}<small>{{ x.data|date:"d/m/Y" }}</small></span><b>R$ {{ x.valor|floatformat:2 }}</b></div>
-{% empty %}<p>Nenhuma despesa cadastrada.</p>{% endfor %}
-<a href="/despesas/">Ver todas</a>
-</section>
+    <section class="panel">
+        <h2>Últimas receitas</h2>
+
+        {% for x in ultimas_receitas %}
+        <div class="row">
+            <span>
+                {{ x.descricao }}
+                <small>{{ x.data|date:"d/m/Y" }}</small>
+            </span>
+            <b>{{ x.valor|moeda_br }}</b>
+        </div>
+        {% empty %}
+        <p>Nenhuma receita cadastrada.</p>
+        {% endfor %}
+
+        <a href="/receitas/">Ver todas</a>
+    </section>
+
+    <section class="panel">
+        <h2>Últimas despesas</h2>
+
+        {% for x in ultimas_despesas %}
+        <div class="row">
+            <span>
+                {{ x.descricao }}
+                <small>{{ x.data|date:"d/m/Y" }}</small>
+            </span>
+            <b>{{ x.valor|moeda_br }}</b>
+        </div>
+        {% empty %}
+        <p>Nenhuma despesa cadastrada.</p>
+        {% endfor %}
+
+        <a href="/despesas/">Ver todas</a>
+    </section>
 </div>
 {% endblock %}
