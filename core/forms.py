@@ -1,8 +1,45 @@
+
 from django import forms
 from .models import Produtor, Receita, Despesa, Documento
 
 
+# Categorias disponíveis para receitas
+CATEGORIAS_RECEITA = [
+    ("", "Selecione uma categoria"),
+    ("Venda de animais", "Venda de animais"),
+    ("Venda de produtos agrícolas", "Venda de produtos agrícolas"),
+    ("Venda de leite e derivados", "Venda de leite e derivados"),
+    ("Prestação de serviços", "Prestação de serviços"),
+    ("Outras receitas", "Outras receitas"),
+]
+
+
+# Categorias disponíveis para despesas
+CATEGORIAS_DESPESA = [
+    ("", "Selecione uma categoria"),
+    ("Alimentação animal", "Alimentação animal"),
+    ("Insumos agrícolas", "Insumos agrícolas"),
+    ("Medicamentos veterinários", "Medicamentos veterinários"),
+    ("Combustível", "Combustível"),
+    ("Manutenção e equipamentos", "Manutenção e equipamentos"),
+    ("Mão de obra", "Mão de obra"),
+    ("Outras despesas", "Outras despesas"),
+]
+
+
+# Categorias disponíveis para documentos
+CATEGORIAS_DOCUMENTO = [
+    ("", "Selecione uma categoria"),
+    ("Nota fiscal", "Nota fiscal"),
+    ("Recibo", "Recibo"),
+    ("Comprovante de pagamento", "Comprovante de pagamento"),
+    ("Contrato", "Contrato"),
+    ("Outros documentos", "Outros documentos"),
+]
+
+
 class ProdutorForm(forms.ModelForm):
+
     email = forms.EmailField(
         label="E-mail",
         required=False,
@@ -17,13 +54,15 @@ class ProdutorForm(forms.ModelForm):
 
     class Meta:
         model = Produtor
+
         fields = [
             "nome",
             "cpf_cnpj",
             "propriedade",
             "telefone",
-            "cidade"
+            "cidade",
         ]
+
         labels = {
             "nome": "Nome completo",
             "cpf_cnpj": "CPF ou CNPJ",
@@ -31,6 +70,7 @@ class ProdutorForm(forms.ModelForm):
             "telefone": "Telefone",
             "cidade": "Município",
         }
+
         widgets = {
             "nome": forms.TextInput(
                 attrs={
@@ -73,27 +113,45 @@ class ProdutorForm(forms.ModelForm):
     def save(self, commit=True):
         produtor = super().save(commit=commit)
 
-        produtor.usuario.email = self.cleaned_data.get("email", "")
-        produtor.usuario.save(update_fields=["email"])
+        if commit:
+            produtor.usuario.email = self.cleaned_data.get("email", "")
+            produtor.usuario.save(update_fields=["email"])
 
         return produtor
 
 
 class ReceitaForm(forms.ModelForm):
+
+    categoria = forms.ChoiceField(
+        label="Categoria",
+        choices=CATEGORIAS_RECEITA,
+        required=False,
+        widget=forms.Select(
+            attrs={"class": "input"}
+        )
+    )
+
     class Meta:
         model = Receita
+
         fields = [
+            "categoria",
             "descricao",
             "valor",
             "data",
-            "categoria",
-            "observacao"
         ]
+
+        labels = {
+            "descricao": "Descrição",
+            "valor": "Valor",
+            "data": "Data",
+        }
+
         widgets = {
             "descricao": forms.TextInput(
                 attrs={
                     "class": "input",
-                    "placeholder": "Ex.: Venda de milho"
+                    "placeholder": "Ex.: Venda de 2 bois"
                 }
             ),
             "valor": forms.NumberInput(
@@ -107,18 +165,6 @@ class ReceitaForm(forms.ModelForm):
                 attrs={
                     "class": "input",
                     "type": "date"
-                }
-            ),
-            "categoria": forms.TextInput(
-                attrs={
-                    "class": "input",
-                    "placeholder": "Ex.: Venda"
-                }
-            ),
-            "observacao": forms.Textarea(
-                attrs={
-                    "class": "input",
-                    "rows": 3
                 }
             ),
         }
@@ -135,20 +181,37 @@ class ReceitaForm(forms.ModelForm):
 
 
 class DespesaForm(forms.ModelForm):
+
+    categoria = forms.ChoiceField(
+        label="Categoria",
+        choices=CATEGORIAS_DESPESA,
+        required=False,
+        widget=forms.Select(
+            attrs={"class": "input"}
+        )
+    )
+
     class Meta:
         model = Despesa
+
         fields = [
+            "categoria",
             "descricao",
             "valor",
             "data",
-            "categoria",
-            "observacao"
         ]
+
+        labels = {
+            "descricao": "Descrição",
+            "valor": "Valor",
+            "data": "Data",
+        }
+
         widgets = {
             "descricao": forms.TextInput(
                 attrs={
                     "class": "input",
-                    "placeholder": "Ex.: Compra de ração"
+                    "placeholder": "Ex.: Compra de 20 sacos de ração"
                 }
             ),
             "valor": forms.NumberInput(
@@ -162,18 +225,6 @@ class DespesaForm(forms.ModelForm):
                 attrs={
                     "class": "input",
                     "type": "date"
-                }
-            ),
-            "categoria": forms.TextInput(
-                attrs={
-                    "class": "input",
-                    "placeholder": "Ex.: Insumos"
-                }
-            ),
-            "observacao": forms.Textarea(
-                attrs={
-                    "class": "input",
-                    "rows": 3
                 }
             ),
         }
@@ -190,16 +241,28 @@ class DespesaForm(forms.ModelForm):
 
 
 class DocumentoForm(forms.ModelForm):
+
+    categoria = forms.ChoiceField(
+        label="Categoria",
+        choices=CATEGORIAS_DOCUMENTO,
+        required=False,
+        widget=forms.Select(
+            attrs={"class": "input"}
+        )
+    )
+
     class Meta:
         model = Documento
+
         fields = [
             "nome",
             "data",
             "categoria",
             "valor",
             "arquivo",
-            "observacao"
+            "observacao",
         ]
+
         widgets = {
             "nome": forms.TextInput(
                 attrs={
@@ -211,12 +274,6 @@ class DocumentoForm(forms.ModelForm):
                 attrs={
                     "class": "input",
                     "type": "date"
-                }
-            ),
-            "categoria": forms.TextInput(
-                attrs={
-                    "class": "input",
-                    "placeholder": "Ex.: Nota fiscal"
                 }
             ),
             "valor": forms.NumberInput(
@@ -267,16 +324,21 @@ class DocumentoForm(forms.ModelForm):
 
         nome = arquivo.name.lower()
 
-        if not any(nome.endswith(ext) for ext in extensoes_permitidas):
+        if not any(
+            nome.endswith(ext)
+            for ext in extensoes_permitidas
+        ):
             raise forms.ValidationError(
-                "Formato não permitido. Envie um arquivo PDF, JPG, JPEG ou PNG."
+                "Formato não permitido. "
+                "Envie um arquivo PDF, JPG, JPEG ou PNG."
             )
 
-        tamanho_maximo = 10 * 1024 * 1024  # 10 MB
+        tamanho_maximo = 10 * 1024 * 1024
 
         if arquivo.size > tamanho_maximo:
             raise forms.ValidationError(
-                "O arquivo é muito grande. O tamanho máximo permitido é 10 MB."
+                "O arquivo é muito grande. "
+                "O tamanho máximo permitido é 10 MB."
             )
 
         return arquivo

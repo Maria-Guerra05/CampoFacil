@@ -1,7 +1,9 @@
+
 {% extends "base.html" %}
 {% load moeda %}
 
 {% block content %}
+
 <div class="welcome">
     <div>
         <h1>Olá, {{ produtor.nome }} 👋</h1>
@@ -10,6 +12,67 @@
     <a class="btn primary" href="/cadastro/">Meu cadastro</a>
 </div>
 
+<!-- Filtro financeiro -->
+<section class="panel" style="margin-bottom: 20px;">
+    <h2>Consultar período</h2>
+
+    <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: end;">
+
+        <div>
+            <label for="mes">Mês</label>
+            <select name="mes" id="mes" class="input">
+                <option value="">Todos os meses</option>
+                <option value="1" {% if mes_selecionado == "1" %}selected{% endif %}>Janeiro</option>
+                <option value="2" {% if mes_selecionado == "2" %}selected{% endif %}>Fevereiro</option>
+                <option value="3" {% if mes_selecionado == "3" %}selected{% endif %}>Março</option>
+                <option value="4" {% if mes_selecionado == "4" %}selected{% endif %}>Abril</option>
+                <option value="5" {% if mes_selecionado == "5" %}selected{% endif %}>Maio</option>
+                <option value="6" {% if mes_selecionado == "6" %}selected{% endif %}>Junho</option>
+                <option value="7" {% if mes_selecionado == "7" %}selected{% endif %}>Julho</option>
+                <option value="8" {% if mes_selecionado == "8" %}selected{% endif %}>Agosto</option>
+                <option value="9" {% if mes_selecionado == "9" %}selected{% endif %}>Setembro</option>
+                <option value="10" {% if mes_selecionado == "10" %}selected{% endif %}>Outubro</option>
+                <option value="11" {% if mes_selecionado == "11" %}selected{% endif %}>Novembro</option>
+                <option value="12" {% if mes_selecionado == "12" %}selected{% endif %}>Dezembro</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="ano">Ano</label>
+            <input
+                type="number"
+                name="ano"
+                id="ano"
+                class="input"
+                placeholder="Ex.: 2026"
+                min="1"
+                max="9999"
+                value="{{ ano_selecionado }}"
+            >
+        </div>
+
+        <button type="submit" class="btn primary">
+            Filtrar
+        </button>
+
+        <a href="/" class="btn">
+            Limpar filtros
+        </a>
+
+    </form>
+
+    {% if mes_selecionado or ano_selecionado %}
+        <p style="margin-top: 12px;">
+            Exibindo movimentações do período selecionado.
+        </p>
+    {% else %}
+        <p style="margin-top: 12px;">
+            Exibindo movimentações de todos os períodos.
+        </p>
+    {% endif %}
+</section>
+
+<!-- Resumo financeiro -->
 <div class="cards">
     <div class="card">
         <span>Receitas</span>
@@ -27,18 +90,21 @@
     </div>
 
     <div class="card">
-        <span>Documentos</span>
+        <span>Documentos (total geral)</span>
         <strong>{{ qtd_documentos }}</strong>
     </div>
 </div>
 
+<!-- Ações rápidas -->
 <div class="quick">
     <a href="/receitas/nova/">➕ Registrar receita</a>
     <a href="/despesas/nova/">➖ Registrar despesa</a>
     <a href="/documentos/novo/">📎 Enviar documento</a>
 </div>
 
+<!-- Últimas movimentações -->
 <div class="grid2">
+
     <section class="panel">
         <h2>Últimas receitas</h2>
 
@@ -51,7 +117,7 @@
             <b>{{ x.valor|moeda_br }}</b>
         </div>
         {% empty %}
-        <p>Nenhuma receita cadastrada.</p>
+        <p>Nenhuma receita encontrada para o período.</p>
         {% endfor %}
 
         <a href="/receitas/">Ver todas</a>
@@ -69,10 +135,12 @@
             <b>{{ x.valor|moeda_br }}</b>
         </div>
         {% empty %}
-        <p>Nenhuma despesa cadastrada.</p>
+        <p>Nenhuma despesa encontrada para o período.</p>
         {% endfor %}
 
         <a href="/despesas/">Ver todas</a>
     </section>
+
 </div>
+
 {% endblock %}

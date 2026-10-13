@@ -13,6 +13,7 @@ def get_produtor(user):
         Produtor,
         usuario=user
     )
+
 @login_required
 def dashboard(request):
 
@@ -35,9 +36,28 @@ def dashboard(request):
     else:
         return redirect("/admin/")
 
+    # Obtém os filtros
+    mes = request.GET.get("mes", "").strip()
+    ano = request.GET.get("ano", "").strip()
+
     receitas = Receita.objects.filter(produtor=produtor)
     despesas = Despesa.objects.filter(produtor=produtor)
 
+    # Filtra por ano, quando informado
+    if ano.isdigit() and 1 <= int(ano) <= 9999:
+        receitas = receitas.filter(data__year=int(ano))
+        despesas = despesas.filter(data__year=int(ano))
+    else:
+        ano = ""
+
+    # Filtra por mês, quando informado
+    if mes.isdigit() and 1 <= int(mes) <= 12:
+        receitas = receitas.filter(data__month=int(mes))
+        despesas = despesas.filter(data__month=int(mes))
+    else:
+        mes = ""
+
+    # Calcula o resumo financeiro do período
     total_receitas = sum(
         (x.valor for x in receitas),
         Decimal("0")
@@ -60,9 +80,9 @@ def dashboard(request):
         ).count(),
         "ultimas_receitas": receitas[:5],
         "ultimas_despesas": despesas[:5],
+        "mes_selecionado": mes,
+        "ano_selecionado": ano,
     })
-
-
 @login_required
 def contabilidade_produtor(request, pk):
 
@@ -103,7 +123,6 @@ def contabilidade_produtor(request, pk):
         "saldo": saldo,
     })
 
-
 @login_required
 def relatorio_produtor(request, pk):
 
@@ -118,10 +137,29 @@ def relatorio_produtor(request, pk):
         contabilidades=contabilidade
     )
 
+    # Obtém os filtros informados na página
+    mes = request.GET.get("mes", "").strip()
+    ano = request.GET.get("ano", "").strip()
+
     receitas = Receita.objects.filter(produtor=produtor)
     despesas = Despesa.objects.filter(produtor=produtor)
     documentos = Documento.objects.filter(produtor=produtor)
 
+    # Aplica o filtro por ano
+    if ano.isdigit() and 1 <= int(ano) <= 9999:
+        receitas = receitas.filter(data__year=int(ano))
+        despesas = despesas.filter(data__year=int(ano))
+    else:
+        ano = ""
+
+    # Aplica o filtro por mês
+    if mes.isdigit() and 1 <= int(mes) <= 12:
+        receitas = receitas.filter(data__month=int(mes))
+        despesas = despesas.filter(data__month=int(mes))
+    else:
+        mes = ""
+
+    # Calcula os valores do período selecionado
     total_receitas = sum(
         (x.valor for x in receitas),
         Decimal("0")
@@ -142,8 +180,9 @@ def relatorio_produtor(request, pk):
         "total_receitas": total_receitas,
         "total_despesas": total_despesas,
         "saldo": saldo,
+        "mes_selecionado": mes,
+        "ano_selecionado": ano,
     })
-
 
 @login_required
 def cadastro_produtor(request):

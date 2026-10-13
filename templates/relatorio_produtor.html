@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -16,8 +17,73 @@
             background: white;
             padding: 30px;
             margin-top: 20px;
+            border-radius: 8px;
         }
 
+        /* Filtros de período */
+        .filtros {
+            display: flex;
+            align-items: end;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f5f7f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .filtro-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filtro-campo label {
+            font-weight: bold;
+        }
+
+        .filtro-campo select,
+        .filtro-campo input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filtros button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #246b45;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .filtros button:hover {
+            background: #185333;
+        }
+
+        .limpar-filtros {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            color: #333;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            background: white;
+            font-size: 14px;
+        }
+
+        .periodo-relatorio {
+            margin: 15px 0;
+            padding: 10px 15px;
+            background: #f8f8f8;
+            border-left: 4px solid #246b45;
+        }
+
+        /* Resumo financeiro */
         .resumo {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -31,13 +97,19 @@
             border-radius: 8px;
         }
 
+        .resumo-card h3 {
+            margin-bottom: 0;
+        }
+
+        /* Tabelas */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
@@ -47,19 +119,79 @@
             background: #f2f2f2;
         }
 
+        /* Botões */
         .botoes {
+            display: flex;
+            gap: 15px;
+            align-items: center;
             margin-top: 25px;
         }
 
+        .botoes button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #246b45;
+            color: white;
+            cursor: pointer;
+        }
+
+        .botoes a {
+            color: #246b45;
+            text-decoration: none;
+        }
+
+        /* Impressão */
         @media print {
+            .filtros,
             .botoes {
-                display: none;
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .relatorio {
+                padding: 0;
+                margin: 0;
+            }
+
+            .resumo-card,
+            tr {
+                break-inside: avoid;
             }
         }
 
+        /* Celulares */
         @media (max-width: 700px) {
+            .relatorio {
+                padding: 15px;
+            }
+
             .resumo {
                 grid-template-columns: 1fr;
+            }
+
+            .filtros {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filtro-campo select,
+            .filtro-campo input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 6px;
+                overflow-wrap: anywhere;
             }
         }
     </style>
@@ -76,6 +208,8 @@
         <h2>Relatório do Produtor</h2>
 
         <hr>
+
+        <!-- Dados do produtor -->
 
         <h3>{{ produtor.nome }}</h3>
 
@@ -94,134 +228,301 @@
         {% endif %}
 
 
+        <!-- Filtros de mês e ano -->
+
+        <form method="get" class="filtros">
+
+            <div class="filtro-campo">
+
+                <label for="mes">Mês</label>
+
+                <select name="mes" id="mes">
+
+                    <option value="">
+                        Todos os meses
+                    </option>
+
+                    <option value="1" {% if mes_selecionado == "1" %}selected{% endif %}>Janeiro</option>
+                    <option value="2" {% if mes_selecionado == "2" %}selected{% endif %}>Fevereiro</option>
+                    <option value="3" {% if mes_selecionado == "3" %}selected{% endif %}>Março</option>
+                    <option value="4" {% if mes_selecionado == "4" %}selected{% endif %}>Abril</option>
+                    <option value="5" {% if mes_selecionado == "5" %}selected{% endif %}>Maio</option>
+                    <option value="6" {% if mes_selecionado == "6" %}selected{% endif %}>Junho</option>
+                    <option value="7" {% if mes_selecionado == "7" %}selected{% endif %}>Julho</option>
+                    <option value="8" {% if mes_selecionado == "8" %}selected{% endif %}>Agosto</option>
+                    <option value="9" {% if mes_selecionado == "9" %}selected{% endif %}>Setembro</option>
+                    <option value="10" {% if mes_selecionado == "10" %}selected{% endif %}>Outubro</option>
+                    <option value="11" {% if mes_selecionado == "11" %}selected{% endif %}>Novembro</option>
+                    <option value="12" {% if mes_selecionado == "12" %}selected{% endif %}>Dezembro</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filtro-campo">
+
+                <label for="ano">Ano</label>
+
+                <input
+                    type="number"
+                    name="ano"
+                    id="ano"
+                    min="1"
+                    max="9999"
+                    placeholder="Ex.: 2026"
+                    value="{{ ano_selecionado }}"
+                >
+
+            </div>
+
+
+            <button type="submit">
+                Filtrar
+            </button>
+
+            <a href="?" class="limpar-filtros">
+                Limpar filtros
+            </a>
+
+        </form>
+
+
+        <!-- Período selecionado -->
+
+        <div class="periodo-relatorio">
+
+            <strong>Período do relatório:</strong>
+
+            {% if mes_selecionado and ano_selecionado %}
+
+                Mês {{ mes_selecionado }}/{{ ano_selecionado }}
+
+            {% elif ano_selecionado %}
+
+                Ano {{ ano_selecionado }}
+
+            {% elif mes_selecionado %}
+
+                Mês {{ mes_selecionado }} (todos os anos)
+
+            {% else %}
+
+                Todos os períodos
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Resumo financeiro -->
+
         <div class="resumo">
 
             <div class="resumo-card">
+
                 <strong>Total de Receitas</strong>
-                <h3>R$ {{ total_receitas }}</h3>
+
+                <h3>R$ {{ total_receitas|floatformat:2 }}</h3>
+
             </div>
 
+
             <div class="resumo-card">
+
                 <strong>Total de Despesas</strong>
-                <h3>R$ {{ total_despesas }}</h3>
+
+                <h3>R$ {{ total_despesas|floatformat:2 }}</h3>
+
             </div>
 
+
             <div class="resumo-card">
+
                 <strong>Saldo</strong>
-                <h3>R$ {{ saldo }}</h3>
+
+                <h3>R$ {{ saldo|floatformat:2 }}</h3>
+
             </div>
 
         </div>
 
 
+        <!-- Receitas -->
+
         <h3>Receitas</h3>
 
         {% if receitas %}
 
-        <table>
+            <table>
 
-            <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Categoria</th>
-                <th>Valor</th>
-            </tr>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
 
-            {% for receita in receitas %}
+                <tbody>
 
-            <tr>
-                <td>{{ receita.data|date:"d/m/Y" }}</td>
+                    {% for receita in receitas %}
 
-                <td>{{ receita.descricao }}</td>
+                        <tr>
 
-                <td>{{ receita.categoria }}</td>
+                            <td>
+                                {{ receita.data|date:"d/m/Y" }}
+                            </td>
 
-                <td>R$ {{ receita.valor }}</td>
-            </tr>
+                            <td>
+                                {{ receita.descricao }}
+                            </td>
 
-            {% endfor %}
+                            <td>
+                                {{ receita.categoria|default:"—" }}
+                            </td>
 
-        </table>
+                            <td>
+                                R$ {{ receita.valor|floatformat:2 }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         {% else %}
 
-        <p>Nenhuma receita cadastrada.</p>
+            <p>
+                Nenhuma receita encontrada para o período selecionado.
+            </p>
 
         {% endif %}
 
+
+        <!-- Despesas -->
 
         <h3>Despesas</h3>
 
         {% if despesas %}
 
-        <table>
+            <table>
 
-            <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Categoria</th>
-                <th>Valor</th>
-            </tr>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
 
-            {% for despesa in despesas %}
+                <tbody>
 
-            <tr>
-                <td>{{ despesa.data|date:"d/m/Y" }}</td>
+                    {% for despesa in despesas %}
 
-                <td>{{ despesa.descricao }}</td>
+                        <tr>
 
-                <td>{{ despesa.categoria }}</td>
+                            <td>
+                                {{ despesa.data|date:"d/m/Y" }}
+                            </td>
 
-                <td>R$ {{ despesa.valor }}</td>
-            </tr>
+                            <td>
+                                {{ despesa.descricao }}
+                            </td>
 
-            {% endfor %}
+                            <td>
+                                {{ despesa.categoria|default:"—" }}
+                            </td>
 
-        </table>
+                            <td>
+                                R$ {{ despesa.valor|floatformat:2 }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         {% else %}
 
-        <p>Nenhuma despesa cadastrada.</p>
+            <p>
+                Nenhuma despesa encontrada para o período selecionado.
+            </p>
 
         {% endif %}
 
+
+        <!-- Documentos -->
 
         <h3>Documentos</h3>
 
+        <p>
+            <small>
+                Os documentos são apresentados independentemente
+                do período selecionado.
+            </small>
+        </p>
+
         {% if documentos %}
 
-        <table>
+            <table>
 
-            <tr>
-                <th>Data</th>
-                <th>Documento</th>
-                <th>Categoria</th>
-            </tr>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Documento</th>
+                        <th>Categoria</th>
+                    </tr>
+                </thead>
 
-            {% for documento in documentos %}
+                <tbody>
 
-            <tr>
-                <td>{{ documento.data|date:"d/m/Y" }}</td>
+                    {% for documento in documentos %}
 
-                <td>{{ documento.nome }}</td>
+                        <tr>
 
-                <td>{{ documento.categoria }}</td>
-            </tr>
+                            <td>
+                                {{ documento.data|date:"d/m/Y" }}
+                            </td>
 
-            {% endfor %}
+                            <td>
+                                {{ documento.nome }}
+                            </td>
 
-        </table>
+                            <td>
+                                {{ documento.categoria|default:"—" }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         {% else %}
 
-        <p>Nenhum documento cadastrado.</p>
+            <p>
+                Nenhum documento cadastrado.
+            </p>
 
         {% endif %}
 
 
+        <!-- Ações -->
+
         <div class="botoes">
 
-            <button onclick="window.print()">
+            <button type="button" onclick="window.print()">
                 🖨️ Imprimir / Salvar PDF
             </button>
 
