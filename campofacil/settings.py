@@ -1,11 +1,16 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "campo-facil-chave-desenvolvimento"
-DEBUG = True
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
-
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or (
+    Path.home() / ".campofacil_secret_key"
+).read_text().strip()
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "mariaguerra.pythonanywhere.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://mariaguerra.pythonanywhere.com",
+]
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -60,6 +65,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "media/"
@@ -69,3 +75,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+

@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from django.http import FileResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -13,7 +13,34 @@ def get_produtor(user):
         Produtor,
         usuario=user
     )
+@login_required
+def visualizar_documento(request, pk):
+    documento = get_object_or_404(Documento, pk=pk)
 
+    if request.user.is_superuser:
+        autorizado = True
+
+    elif hasattr(request.user, "produtor"):
+        autorizado = documento.produtor.usuario_id == request.user.id
+
+    elif hasattr(request.user, "contabilidade"):
+        autorizado = request.user.contabilidade.produtores.filter(
+            pk=documento.produtor_id
+        ).exists()
+
+    else:
+        autorizado = False
+
+    if not autorizado:
+        raise Http404("Documento não encontrado.")
+
+    try:
+        return FileResponse(
+            documento.arquivo.open("rb"),
+            as_attachment=False,
+        )
+    except (FileNotFoundError, ValueError):
+        raise Http404("Arquivo não encontrado.")
 @login_required
 def dashboard(request):
 

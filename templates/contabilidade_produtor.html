@@ -176,17 +176,13 @@
                     </small>
                 </div>
 
-                {% if documento.arquivo %}
-
-                    <a
-                        class="btn"
-                        href="{{ documento.arquivo.url }}"
-                        target="_blank"
-                    >
-                        Ver documento
-                    </a>
-
-                {% endif %}
+             <a
+    class="btn"
+    href="{% url 'visualizar_documento' documento.pk %}"
+    target="_blank"
+>
+    Ver documento
+</a>
 
             </div>
 

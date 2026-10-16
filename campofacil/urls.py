@@ -23,6 +23,11 @@ urlpatterns = [
     path("despesas/excluir/<int:pk>/", views.excluir_despesa, name="excluir_despesa"),
     path("documentos/", views.documentos, name="documentos"),
     path("documentos/novo/", views.novo_documento, name="novo_documento"),
+    path(
+    "documentos/visualizar/<int:pk>/",
+    views.visualizar_documento,
+    name="visualizar_documento",
+),
     path("documentos/excluir/<int:pk>/", views.excluir_documento, name="excluir_documento"),
     path(
     "contabilidade/produtor/<int:pk>/relatorio/",
