@@ -308,6 +308,10 @@ class DocumentoForm(forms.ModelForm):
         return valor
 
     def clean_arquivo(self):
+        from io import BytesIO
+        from pathlib import Path
+        from PIL import Image, UnidentifiedImageError
+
         arquivo = self.cleaned_data.get("arquivo")
 
         if not arquivo:
@@ -315,30 +319,46 @@ class DocumentoForm(forms.ModelForm):
                 "Selecione um arquivo para enviar."
             )
 
-        extensoes_permitidas = [
-            ".pdf",
-            ".jpg",
-            ".jpeg",
-            ".png"
-        ]
+        extensao = Path(arquivo.name).suffix.lower()
 
-        nome = arquivo.name.lower()
-
-        if not any(
-            nome.endswith(ext)
-            for ext in extensoes_permitidas
-        ):
+        if extensao not in (".pdf", ".jpg", ".jpeg", ".png"):
             raise forms.ValidationError(
-                "Formato não permitido. "
-                "Envie um arquivo PDF, JPG, JPEG ou PNG."
+                "Formato não permitido. Envie PDF, JPG ou PNG."
             )
 
-        tamanho_maximo = 10 * 1024 * 1024
-
-        if arquivo.size > tamanho_maximo:
+        if arquivo.size > 10 * 1024 * 1024:
             raise forms.ValidationError(
-                "O arquivo é muito grande. "
                 "O tamanho máximo permitido é 10 MB."
             )
+
+        try:
+            arquivo.seek(0)
+
+            if extensao == ".pdf":
+                cabecalho = arquivo.read(8)
+                if not cabecalho.startswith(b"%PDF-"):
+                    raise forms.ValidationError(
+                        "O arquivo não é um PDF válido."
+                    )
+            else:
+                with Image.open(arquivo) as imagem:
+                    formato = imagem.format
+                    imagem.verify()
+
+                esperado = (
+                    "PNG" if extensao == ".png" else "JPEG"
+                )
+
+                if formato != esperado:
+                    raise forms.ValidationError(
+                        "O conteúdo não corresponde ao formato da imagem."
+                    )
+
+        except (OSError, ValueError, UnidentifiedImageError):
+            raise forms.ValidationError(
+                "Não foi possível validar o arquivo enviado."
+            )
+        finally:
+            arquivo.seek(0)
 
         return arquivo
